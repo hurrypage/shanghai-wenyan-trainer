@@ -1,0 +1,206 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="上海高考文言文训练器的本地优先样例。每天用约 10 分钟练习词句、翻译与文本理解。">
+    <link rel="icon" href="favicon.svg" type="image/svg+xml">
+    <title>文言 · 上海｜10 分钟训练</title>
+    <link rel="stylesheet" href="styles.css">
+  </head>
+  <body>
+    <a class="skip-link" href="#content">跳到主要内容</a>
+
+    <header class="topbar">
+      <div class="topbar-inner">
+        <a class="brand" href="#overview" aria-label="回到文言上海首页">
+          <span class="brand-mark" aria-hidden="true">文</span>
+          <span>
+            <span class="brand-title">文言 · 上海</span>
+            <span class="brand-subtitle">10 分钟，慢慢读懂一篇文</span>
+          </span>
+        </a>
+        <nav class="topnav" aria-label="主导航">
+          <button type="button" class="nav-link is-active" data-view="overview">今日训练</button>
+          <button type="button" class="nav-link" data-view="records">学习记录</button>
+        </nav>
+        <div class="top-actions">
+          <span class="local-badge"><span class="status-dot" aria-hidden="true"></span>本地保存</span>
+          <button type="button" class="icon-button" id="open-help" aria-label="查看使用说明">?</button>
+        </div>
+      </div>
+    </header>
+
+    <main id="content" tabindex="-1">
+      <section id="overview-view" class="view" aria-labelledby="overview-title">
+        <div class="page-grid">
+          <div class="main-column">
+            <div class="eyebrow-row">
+              <span class="eyebrow">SATURDAY · 09.20</span>
+              <span class="source-note">样例版 · 内容待审核</span>
+            </div>
+            <h1 id="overview-title">今天，读一小段<br><em>再把它记住。</em></h1>
+            <p class="lede">不追求刷很多题。先看清句子，再在陌生语境里把它找回来。</p>
+
+            <article class="today-card card-surface">
+              <div class="today-card-top">
+                <div>
+                  <span class="card-kicker">今日训练</span>
+                  <h2><span id="session-estimate">约 10 分钟</span><span class="muted-inline"> · 到期复习优先</span></h2>
+                </div>
+                <div class="ring-wrap">
+                  <progress id="today-progress" class="study-ring" value="0" max="100" aria-label="今日训练完成度"></progress>
+                  <span class="ring-value" id="today-progress-label">0%</span>
+                </div>
+              </div>
+              <div class="today-stats" aria-label="今日训练分配">
+                <div class="stat-cell"><span class="stat-number" id="due-count">0</span><span class="stat-label">需要复习</span></div>
+                <div class="stat-cell"><span class="stat-number" id="new-count">4</span><span class="stat-label">新的内容</span></div>
+                <div class="stat-cell"><span class="stat-number" id="yesterday-count">0</span><span class="stat-label">昨日错题</span></div>
+              </div>
+              <button type="button" class="primary-button" id="start-session">
+                <span>开始今天的训练</span><span aria-hidden="true">↗</span>
+              </button>
+              <p class="microcopy" id="session-note">今天的新卡不会在本次结束时立即计入掌握。</p>
+            </article>
+
+            <section class="section-block" aria-labelledby="insight-title">
+              <div class="section-heading">
+                <div>
+                  <span class="card-kicker">读懂自己的失分</span>
+                  <h2 id="insight-title">能力线索</h2>
+                </div>
+                <span class="section-meta" id="sample-meta">样本尚未形成</span>
+              </div>
+              <div class="skill-list" id="skill-list"></div>
+              <p class="section-footnote">这里展示近期作答证据，不把少量题目换算成稳定能力结论。</p>
+            </section>
+          </div>
+
+          <aside class="side-column" aria-label="学习侧栏">
+            <section class="streak-card card-surface">
+              <div class="streak-head"><span class="card-kicker">连续学习</span><span class="streak-icon" aria-hidden="true">✦</span></div>
+              <div class="streak-number"><span id="streak-count">0</span><span class="streak-unit">天</span></div>
+              <p id="streak-copy">今天开始，点亮第一天。</p>
+              <div class="week-dots" id="week-dots" aria-label="最近七天完成情况"></div>
+            </section>
+
+            <section class="principle-card">
+              <span class="quote-mark" aria-hidden="true">“</span>
+              <p>会做一道题，和换一篇文章仍然会做，是两件事。</p>
+              <span class="principle-caption">这个训练器会把它们分开记录。</span>
+            </section>
+
+            <section class="boundary-card">
+              <div class="boundary-icon" aria-hidden="true">⌁</div>
+              <div>
+                <strong>当前是小范围样例</strong>
+                <p>2 篇教材语料 · 6 个训练任务<br>上海真题资料将在审核后加入。</p>
+              </div>
+            </section>
+          </aside>
+        </div>
+
+        <section class="history-section" aria-labelledby="history-title">
+          <div class="section-heading">
+            <div><span class="card-kicker">不靠感觉猜进步</span><h2 id="history-title">最近的学习</h2></div>
+            <button type="button" class="text-button" data-view="records">查看全部记录 <span aria-hidden="true">→</span></button>
+          </div>
+          <div class="history-table-wrap">
+            <table class="history-table">
+              <caption class="visually-hidden">最近学习记录</caption>
+              <thead><tr><th scope="col">日期</th><th scope="col">完成</th><th scope="col">有效时长</th><th scope="col">结果</th></tr></thead>
+              <tbody id="history-body"><tr><td colspan="4" class="empty-row">还没有学习记录，今天先完成一小段。</td></tr></tbody>
+            </table>
+          </div>
+        </section>
+      </section>
+
+      <section id="records-view" class="view is-hidden" aria-labelledby="records-title">
+        <div class="records-header">
+          <div><span class="eyebrow">LEARNING LOG</span><h1 id="records-title">学习记录</h1><p class="lede">每次作答都留下证据，方便你回看自己的变化。</p></div>
+          <button type="button" class="secondary-button" data-view="overview">← 回到今日</button>
+        </div>
+        <div class="records-grid">
+          <section class="record-summary card-surface" aria-labelledby="record-summary-title">
+            <span class="card-kicker">累计记录</span>
+            <h2 id="record-summary-title">还在建立自己的样本</h2>
+            <div class="record-metrics"><div><strong id="total-attempts">0</strong><span>次作答</span></div><div><strong id="total-minutes">0</strong><span>有效分钟</span></div><div><strong id="delayed-checks">0</strong><span>延迟复测</span></div></div>
+            <p class="section-footnote">当某项样本少于 5 个时，系统会保持谨慎，不显示百分比结论。</p>
+          </section>
+          <section class="record-list-card card-surface" aria-labelledby="record-list-title">
+            <div class="section-heading"><div><span class="card-kicker">逐题回看</span><h2 id="record-list-title">作答轨迹</h2></div><span class="section-meta" id="record-list-meta">0 条</span></div>
+            <ol class="attempt-list" id="attempt-list"><li class="empty-list">完成第一次训练后，这里会出现你的作答轨迹。</li></ol>
+          </section>
+        </div>
+      </section>
+
+      <section id="session-view" class="view is-hidden" aria-labelledby="session-title">
+        <div class="session-shell">
+          <div class="session-toolbar">
+            <button type="button" class="back-button" id="quit-session"><span aria-hidden="true">←</span> 暂停训练</button>
+            <div class="session-progress-label"><span id="session-step">1 / 4</span><span id="session-mode">学习与复习</span></div>
+            <span class="time-pill" id="session-time">约 10 分钟</span>
+          </div>
+          <div class="progress-track" role="progressbar" aria-label="本次训练进度" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><span id="session-progress-bar"></span></div>
+
+          <div id="session-card" class="session-card">
+            <div class="session-context">
+              <div class="context-label"><span id="item-source">样例 · 教材语料</span><span id="item-type">词句理解</span></div>
+              <h2 id="passage-title">—</h2>
+              <div id="passage-text" class="passage-text"></div>
+              <button type="button" class="small-button" id="toggle-context">收起原文</button>
+            </div>
+            <div class="question-panel">
+              <div class="question-kicker" id="question-kicker">QUESTION 01</div>
+              <h1 id="session-title">—</h1>
+              <form id="answer-form" class="answer-form">
+                <div id="answer-area"></div>
+                <p class="form-hint" id="answer-hint"></p>
+                <button type="submit" class="primary-button submit-answer">提交答案 <span aria-hidden="true">↗</span></button>
+              </form>
+              <div id="feedback-panel" class="feedback-panel is-hidden" aria-live="polite">
+                <div id="feedback-status" class="feedback-status"></div>
+                <div class="answer-reveal"><span class="reveal-label">参考答案</span><div id="correct-answer"></div></div>
+                <div class="explanation-block"><span class="reveal-label">为什么</span><p id="explanation"></p></div>
+                <fieldset class="grade-fieldset">
+                  <legend>这次回忆的感觉</legend>
+                  <div class="grade-options" id="grade-options">
+                    <button type="button" class="grade-button" data-grade="0"><span>完全不会</span><small>需要重学</small></button>
+                    <button type="button" class="grade-button" data-grade="1"><span>有印象</span><small>还不稳定</small></button>
+                    <button type="button" class="grade-button" data-grade="2"><span>基本掌握</span><small>换题再测</small></button>
+                    <button type="button" class="grade-button" data-grade="3"><span>非常熟练</span><small>可以间隔更久</small></button>
+                  </div>
+                </fieldset>
+                <p class="feedback-note" id="feedback-note"></p>
+              </div>
+            </div>
+          </div>
+
+          <div id="session-summary" class="session-summary card-surface is-hidden" aria-live="polite">
+            <div class="summary-mark" aria-hidden="true">✓</div>
+            <span class="card-kicker">今日训练完成</span>
+            <h1>你给未来的自己<br><em>留了一点时间。</em></h1>
+            <p id="summary-copy">—</p>
+            <div class="summary-stats"><div><strong id="summary-completed">0</strong><span>题完成</span></div><div><strong id="summary-correct">0</strong><span>题无需提示</span></div><div><strong id="summary-minutes">0</strong><span>有效分钟</span></div></div>
+            <button type="button" class="primary-button" id="finish-session">回到今日首页 <span aria-hidden="true">→</span></button>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="app-footer">
+      <div><span>文言 · 上海</span><span class="footer-muted">本地优先 · 练习记录只保存在这台设备</span></div>
+      <div class="footer-actions"><button type="button" class="text-button" id="export-data">导出备份</button><button type="button" class="text-button" id="import-data">导入备份</button><input id="import-file" type="file" accept="application/json" hidden></div>
+    </footer>
+
+    <dialog id="help-dialog" class="help-dialog" aria-labelledby="help-title">
+      <div class="dialog-inner"><div class="dialog-top"><span class="card-kicker">HOW IT WORKS</span><button type="button" class="icon-button" id="close-help" aria-label="关闭使用说明">×</button></div><h2 id="help-title">把一次练习，变成三次记忆</h2><ol><li><strong>先独立回答。</strong>答案和注释会暂时收起来。</li><li><strong>再看参考答案。</strong>主观题按评分点自己对照。</li><li><strong>最后标记感觉。</strong>系统会安排下一次复习，不把即时记忆算成掌握。</li></ol><p class="dialog-note">当前版本只含 2 篇样例文章，内容尚未作为正式题库发布。</p><button type="button" class="primary-button" id="close-help-cta">知道了</button></div>
+    </dialog>
+
+    <dialog id="reset-dialog" class="help-dialog" aria-labelledby="reset-title"><div class="dialog-inner"><div class="dialog-top"><span class="card-kicker">CLEAR DATA</span><button type="button" class="icon-button" id="close-reset" aria-label="关闭">×</button></div><h2 id="reset-title">清空本地记录？</h2><p>这会删除这台设备上的作答和复习进度。若你还没导出备份，建议先取消。</p><div class="dialog-actions"><button type="button" class="secondary-button" id="cancel-reset">取消</button><button type="button" class="danger-button" id="confirm-reset">清空记录</button></div></div></dialog>
+
+    <div id="announcement" class="visually-hidden" aria-live="polite"></div>
+    <script src="app.js" defer></script>
+  </body>
+</html>
