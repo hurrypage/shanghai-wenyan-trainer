@@ -7,6 +7,7 @@
     <link rel="icon" href="favicon.svg" type="image/svg+xml">
     <title>文言 · 上海｜10 分钟训练</title>
     <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="pixel-theme.css">
   </head>
   <body>
     <a class="skip-link" href="#content">跳到主要内容</a>
@@ -39,6 +40,7 @@
               <span class="eyebrow">SATURDAY · 09.20</span>
               <span class="source-note">样例版 · 内容待审核</span>
             </div>
+            <div class="pixel-edition" aria-hidden="true">▣ WENYAN / DAILY QUEST</div>
             <h1 id="overview-title">今天，读一小段<br><em>再把它记住。</em></h1>
             <p class="lede">不追求刷很多题。先看清句子，再在陌生语境里把它找回来。</p>
 
@@ -55,7 +57,7 @@
               </div>
               <div class="today-stats" aria-label="今日训练分配">
                 <div class="stat-cell"><span class="stat-number" id="due-count">0</span><span class="stat-label">需要复习</span></div>
-                <div class="stat-cell"><span class="stat-number" id="new-count">4</span><span class="stat-label">新的内容</span></div>
+                <div class="stat-cell"><span class="stat-number" id="new-count">18</span><span class="stat-label">新的内容</span></div>
                 <div class="stat-cell"><span class="stat-number" id="yesterday-count">0</span><span class="stat-label">昨日错题</span></div>
               </div>
               <button type="button" class="primary-button" id="start-session">
@@ -78,6 +80,10 @@
           </div>
 
           <aside class="side-column" aria-label="学习侧栏">
+            <div class="pixel-book-panel" aria-hidden="true">
+              <svg class="pixel-book" viewBox="0 0 120 80" shape-rendering="crispEdges"><path fill="#171717" d="M12 16h36v4h24v-4h36v48H76v4H44v-4H12z"/><path fill="#e9ee9b" d="M16 20h28v4h12v36H44v-4H16z"/><path fill="#fff" d="M64 24h12v-4h28v36H76v4H64z"/><path fill="#171717" d="M24 28h16v4H24zm0 12h24v4H24zm52-12h20v4H76zm-4 12h24v4H72zM56 24h8v44h-8zM8 64h32v4H8zm72 0h32v4H80z"/><path fill="#65782a" d="M56 0h8v8h-8zM0 32h8v8H0zm112 0h8v8h-8z"/></svg>
+              <span>一字一句 / 积累有迹</span>
+            </div>
             <section class="streak-card card-surface">
               <div class="streak-head"><span class="card-kicker">连续学习</span><span class="streak-icon" aria-hidden="true">✦</span></div>
               <div class="streak-number"><span id="streak-count">0</span><span class="streak-unit">天</span></div>
@@ -95,7 +101,7 @@
               <div class="boundary-icon" aria-hidden="true">⌁</div>
               <div>
                 <strong>当前是小范围样例</strong>
-                <p>2 篇教材语料 · 6 个训练任务<br>上海真题资料将在审核后加入。</p>
+                <p>6 篇教材语料 · 18 个训练任务<br>上海真题资料将在审核后加入。</p>
               </div>
             </section>
           </aside>
@@ -195,12 +201,12 @@
     </footer>
 
     <dialog id="help-dialog" class="help-dialog" aria-labelledby="help-title">
-      <div class="dialog-inner"><div class="dialog-top"><span class="card-kicker">HOW IT WORKS</span><button type="button" class="icon-button" id="close-help" aria-label="关闭使用说明">×</button></div><h2 id="help-title">把一次练习，变成三次记忆</h2><ol><li><strong>先独立回答。</strong>答案和注释会暂时收起来。</li><li><strong>再看参考答案。</strong>主观题按评分点自己对照。</li><li><strong>最后标记感觉。</strong>系统会安排下一次复习，不把即时记忆算成掌握。</li></ol><p class="dialog-note">当前版本只含 2 篇样例文章，内容尚未作为正式题库发布。</p><button type="button" class="primary-button" id="close-help-cta">知道了</button></div>
+      <div class="dialog-inner"><div class="dialog-top"><span class="card-kicker">HOW IT WORKS</span><button type="button" class="icon-button" id="close-help" aria-label="关闭使用说明">×</button></div><h2 id="help-title">把一次练习，变成三次记忆</h2><ol><li><strong>先独立回答。</strong>答案和注释会暂时收起来。</li><li><strong>再看参考答案。</strong>主观题按评分点自己对照。</li><li><strong>最后标记感觉。</strong>系统会安排下一次复习，不把即时记忆算成掌握。</li></ol><p class="dialog-note">当前版本含 6 篇教材语料样例，内容尚未作为正式题库发布。</p><button type="button" class="primary-button" id="close-help-cta">知道了</button></div>
     </dialog>
 
     <dialog id="reset-dialog" class="help-dialog" aria-labelledby="reset-title"><div class="dialog-inner"><div class="dialog-top"><span class="card-kicker">CLEAR DATA</span><button type="button" class="icon-button" id="close-reset" aria-label="关闭">×</button></div><h2 id="reset-title">清空本地记录？</h2><p>这会删除这台设备上的作答和复习进度。若你还没导出备份，建议先取消。</p><div class="dialog-actions"><button type="button" class="secondary-button" id="cancel-reset">取消</button><button type="button" class="danger-button" id="confirm-reset">清空记录</button></div></div></dialog>
 
     <div id="announcement" class="visually-hidden" aria-live="polite"></div>
-    <script src="app.js" defer></script>
+    <script src="app.js?v=20260920-content-02" defer></script>
   </body>
 </html>
