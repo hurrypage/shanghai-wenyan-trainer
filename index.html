@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="description" content="上海高考文言文训练器的本地优先样例。每天用约 10 分钟练习词句、翻译与文本理解。">
+    <meta name="description" content="上海高考文言文与古诗训练器。依据 WB 信源库的课程、教材和文本参照层，每天用约 10 分钟练习词句、翻译与文本理解。">
     <link rel="icon" href="favicon.svg" type="image/svg+xml">
     <title>文言 · 上海｜10 分钟训练</title>
     <link rel="stylesheet" href="styles.css">
@@ -38,11 +38,46 @@
           <div class="main-column">
             <div class="eyebrow-row">
               <span class="eyebrow">SATURDAY · 09.20</span>
-              <span class="source-note">样例版 · 内容待审核</span>
+              <span class="source-note">信源绑定 · 原创训练</span>
             </div>
             <div class="pixel-edition" aria-hidden="true">▣ WENYAN / DAILY QUEST</div>
             <h1 id="overview-title">今天，读一小段<br><em>再把它记住。</em></h1>
-            <p class="lede">不追求刷很多题。先看清句子，再在陌生语境里把它找回来。</p>
+            <p class="lede">不追求刷很多题。先看清句子，再在陌生语境里把它找回来。每张卡都标注材料层级与使用边界。</p>
+
+            <section class="quick-actions" aria-labelledby="quick-actions-title">
+              <div class="section-heading quick-actions-heading">
+                <div><span class="card-kicker">随时开始</span><h2 id="quick-actions-title">选一种今天的节奏</h2></div>
+                <span class="section-meta">本地保存 · 不占流量</span>
+              </div>
+              <div class="quick-action-grid">
+                <button type="button" class="quick-action" data-start-mode="quick">
+                  <span class="quick-action-icon" aria-hidden="true">✦</span><span><strong>随手一张</strong><small>只做一张，到期优先</small></span><span aria-hidden="true">→</span>
+                </button>
+                <button type="button" class="quick-action" data-start-mode="three">
+                  <span class="quick-action-icon" aria-hidden="true">03</span><span><strong>三分钟练</strong><small>最多四张，完成一个闭环</small></span><span aria-hidden="true">→</span>
+                </button>
+                <button type="button" class="quick-action" data-start-mode="read">
+                  <span class="quick-action-icon" aria-hidden="true">文</span><span><strong>读一小段</strong><small>同一篇材料连续理解</small></span><span aria-hidden="true">→</span>
+                </button>
+                <button type="button" class="quick-action" data-start-mode="continue" id="continue-session">
+                  <span class="quick-action-icon" aria-hidden="true">↻</span><span><strong>继续上次</strong><small id="continue-session-copy">没有未完成训练</small></span><span aria-hidden="true">→</span>
+                </button>
+              </div>
+            </section>
+
+            <section class="passage-picker" aria-labelledby="passage-picker-title">
+              <div class="section-heading passage-picker-heading">
+                <div>
+                  <span class="card-kicker">按篇训练</span>
+                  <h2 id="passage-picker-title">选一篇古文，集中练一轮</h2>
+                </div>
+                <button type="button" class="secondary-button passage-refresh" id="refresh-passages" aria-describedby="passage-picker-note">
+                  <span aria-hidden="true">↻</span> 重置 5 篇
+                </button>
+              </div>
+              <p class="passage-picker-note" id="passage-picker-note">从当前已入库的文言文与诗歌语料中抽取 5 篇；选中后会连续练习这篇的全部训练卡。</p>
+              <div class="passage-option-grid" id="passage-options" role="list" aria-label="可选古文篇目"></div>
+            </section>
 
             <article class="today-card card-surface">
               <div class="today-card-top">
@@ -57,7 +92,7 @@
               </div>
               <div class="today-stats" aria-label="今日训练分配">
                 <div class="stat-cell"><span class="stat-number" id="due-count">0</span><span class="stat-label">需要复习</span></div>
-                <div class="stat-cell"><span class="stat-number" id="new-count">18</span><span class="stat-label">新的内容</span></div>
+                <div class="stat-cell"><span class="stat-number" id="new-count">78</span><span class="stat-label">新的内容</span></div>
                 <div class="stat-cell"><span class="stat-number" id="yesterday-count">0</span><span class="stat-label">昨日错题</span></div>
               </div>
               <button type="button" class="primary-button" id="start-session">
@@ -100,8 +135,8 @@
             <section class="boundary-card">
               <div class="boundary-icon" aria-hidden="true">⌁</div>
               <div>
-                <strong>当前是小范围样例</strong>
-                <p>6 篇教材语料 · 18 个训练任务<br>上海真题资料将在审核后加入。</p>
+                <strong>当前是小范围训练集</strong>
+                <p><span id="passage-count">36</span> 篇可训练语料 · <span id="item-count">78</span> 个原创训练<br>真题原题与官方答案仍保持隔离。</p>
               </div>
             </section>
           </aside>
@@ -152,9 +187,10 @@
 
           <div id="session-card" class="session-card">
             <div class="session-context">
-              <div class="context-label"><span id="item-source">样例 · 教材语料</span><span id="item-type">词句理解</span></div>
+              <div class="context-label"><span id="item-source">原创训练 · 教材语境</span><span id="item-type">词句理解</span></div>
               <h2 id="passage-title">—</h2>
               <div id="passage-text" class="passage-text"></div>
+              <p id="item-source-note" class="source-note source-note-panel">来源核验信息将在这里显示。</p>
               <button type="button" class="small-button" id="toggle-context">收起原文</button>
             </div>
             <div class="question-panel">
@@ -178,6 +214,10 @@
                     <button type="button" class="grade-button" data-grade="3"><span>非常熟练</span><small>可以间隔更久</small></button>
                   </div>
                 </fieldset>
+                <div class="feedback-actions" aria-label="答案处理">
+                  <button type="button" class="text-button" id="flag-question">答案有疑问</button>
+                  <button type="button" class="text-button" id="skip-card">跳过这张卡</button>
+                </div>
                 <p class="feedback-note" id="feedback-note"></p>
               </div>
             </div>
@@ -201,12 +241,13 @@
     </footer>
 
     <dialog id="help-dialog" class="help-dialog" aria-labelledby="help-title">
-      <div class="dialog-inner"><div class="dialog-top"><span class="card-kicker">HOW IT WORKS</span><button type="button" class="icon-button" id="close-help" aria-label="关闭使用说明">×</button></div><h2 id="help-title">把一次练习，变成三次记忆</h2><ol><li><strong>先独立回答。</strong>答案和注释会暂时收起来。</li><li><strong>再看参考答案。</strong>主观题按评分点自己对照。</li><li><strong>最后标记感觉。</strong>系统会安排下一次复习，不把即时记忆算成掌握。</li></ol><p class="dialog-note">当前版本含 6 篇教材语料样例，内容尚未作为正式题库发布。</p><button type="button" class="primary-button" id="close-help-cta">知道了</button></div>
+      <div class="dialog-inner"><div class="dialog-top"><span class="card-kicker">HOW IT WORKS</span><button type="button" class="icon-button" id="close-help" aria-label="关闭使用说明">×</button></div><h2 id="help-title">把一次练习，变成三次记忆</h2><ol><li><strong>先独立回答。</strong>答案和注释会暂时收起来。</li><li><strong>再看参考答案。</strong>主观题按评分点自己对照。</li><li><strong>最后标记感觉。</strong>系统会安排下一次复习，不把即时记忆算成掌握。</li></ol><p class="dialog-note">当前卡片是“原创训练”，依据 WB 信源库的课程标准、教材篇目、官方评析和文本参照层整理；文本参照层不等同于教材底本。系统不把未收全的真题、答案或阅卷细则伪装成正式题库，苏辙《六国论》也不会与教材苏洵版混用。</p><button type="button" class="primary-button" id="close-help-cta">知道了</button></div>
     </dialog>
 
     <dialog id="reset-dialog" class="help-dialog" aria-labelledby="reset-title"><div class="dialog-inner"><div class="dialog-top"><span class="card-kicker">CLEAR DATA</span><button type="button" class="icon-button" id="close-reset" aria-label="关闭">×</button></div><h2 id="reset-title">清空本地记录？</h2><p>这会删除这台设备上的作答和复习进度。若你还没导出备份，建议先取消。</p><div class="dialog-actions"><button type="button" class="secondary-button" id="cancel-reset">取消</button><button type="button" class="danger-button" id="confirm-reset">清空记录</button></div></div></dialog>
 
     <div id="announcement" class="visually-hidden" aria-live="polite"></div>
-    <script src="app.js?v=20260920-content-02" defer></script>
+    <script src="expansion-data.js?v=20260921-content-03" defer></script>
+    <script src="app.js?v=20260921-content-03" defer></script>
   </body>
 </html>

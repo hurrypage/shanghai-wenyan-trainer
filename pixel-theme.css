@@ -29,6 +29,24 @@ h1 { font-size: clamp(2.6rem, 4.3vw, 4rem); line-height: 1.24; letter-spacing: -
 h1 em, .session-summary h1 em { font-family: inherit; font-weight: 900; color: var(--ink); background: linear-gradient(transparent 65%, var(--sun) 65%, var(--sun) 94%, transparent 94%); }
 h2 { font-weight: 850; line-height: 1.35; letter-spacing: 0; }
 .lede { font-size: .98rem; line-height: 1.8; }
+.quick-actions { margin-top: 24px; }
+.quick-action-grid { gap: 12px; }
+.quick-action { border: 2px solid var(--ink); border-radius: 0; box-shadow: 3px 3px 0 var(--ink); background: #fff; }
+.quick-action:hover { transform: translate(1px, 1px); border-color: var(--ink); background: var(--sun); box-shadow: 2px 2px 0 var(--ink); }
+.quick-action:disabled { box-shadow: 2px 2px 0 #9b9d8b; }
+.quick-action-icon { border-radius: 0; border: 1px solid var(--ink); background: var(--sun); color: var(--ink); font-family: Consolas, monospace; }
+.passage-picker { padding: 24px; border: 2px solid var(--ink); background: #fff; }
+.passage-picker-heading { margin-bottom: 8px; }
+.passage-picker-note { color: var(--ink-soft); }
+.passage-option-grid { gap: 12px; }
+.passage-option { min-height: 234px; border: 2px solid var(--ink); border-radius: 0; box-shadow: 3px 3px 0 var(--ink); }
+.passage-option:hover { transform: translate(1px, 1px); border-color: var(--ink); background: var(--sun); box-shadow: 2px 2px 0 var(--ink); }
+.passage-option-number { color: var(--ink); }
+.passage-option-title { font-family: Consolas, "Microsoft YaHei", monospace; font-size: 1rem; font-weight: 900; }
+.passage-option-excerpt { color: var(--ink-soft); }
+.passage-option-foot { border-top: 2px dotted var(--line); color: var(--ink-soft); }
+.source-note-panel { border-left: 3px solid var(--ink); background: #f7f8ed; color: var(--ink-soft); }
+.feedback-actions { border-top: 1px dotted var(--line); padding-top: 12px; }
 .card-surface, .principle-card, .session-card, .history-table-wrap, .help-dialog {
   border: 3px solid var(--ink); border-radius: 0; box-shadow: 5px 5px 0 var(--ink);
 }
@@ -130,6 +148,7 @@ button:disabled { cursor: default; opacity: .6; transform: none; }
   .stat-number { font-size: 1.6rem; }
   .stat-label { font-size: .72rem; }
   .section-block { padding: 20px 16px; }
+  .passage-picker { padding: 20px 16px; }
   .section-heading { flex-wrap: wrap; gap: 10px; }
   .skill-row { grid-template-columns: 84px 1fr 66px; gap: 8px; }
   .skill-name { font-size: .76rem; }

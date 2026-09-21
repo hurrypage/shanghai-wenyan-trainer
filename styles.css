@@ -88,6 +88,33 @@ h1 { margin: 20px 0 18px; font-size: clamp(2.8rem, 6vw, 5.15rem); font-weight: 7
 h1 em, .session-summary h1 em { color: var(--coral); font-family: "Noto Serif SC", "Songti SC", serif; font-style: normal; font-weight: 500; }
 h2 { margin-bottom: 0; font-size: clamp(1.45rem, 2.4vw, 2.1rem); }
 .lede { max-width: 39rem; color: var(--ink-soft); font-size: 1.08rem; }
+.quick-actions { container-type: inline-size; margin-top: 30px; }
+.quick-actions-heading { margin-bottom: 14px; }
+.quick-actions-heading h2 { font-size: 1.35rem; }
+.quick-action-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+.quick-action { min-height: 74px; display: grid; grid-template-columns: 35px 1fr auto; align-items: center; gap: 10px; padding: 12px 14px; border: 1px solid var(--line-strong); border-radius: var(--radius-sm); background: var(--paper); color: var(--ink); text-align: left; box-shadow: 0 5px 12px rgba(57, 46, 33, .05); transition: transform .16s ease, border-color .16s ease, background .16s ease; }
+.quick-action:hover { transform: translateY(-2px); border-color: var(--coral); background: #fff8f4; }
+.quick-action:disabled { cursor: default; opacity: .55; transform: none; }
+.quick-action-icon { display: grid; place-items: center; width: 30px; height: 30px; border-radius: 9px; background: var(--lavender); color: var(--navy); font-size: .72rem; font-weight: 800; }
+.quick-action strong, .quick-action small { display: block; }
+.quick-action strong { font-size: .86rem; }
+.quick-action small { margin-top: 2px; color: var(--ink-faint); font-size: .7rem; line-height: 1.35; }
+.passage-picker { margin-top: 42px; }
+.passage-picker-heading { margin-bottom: 10px; }
+.passage-picker-heading .secondary-button { flex: 0 0 auto; width: auto; }
+.passage-picker-note { margin: 0 0 16px; color: var(--ink-faint); font-size: .78rem; line-height: 1.6; }
+.passage-option-grid { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 12px; }
+.passage-option-card { min-width: 0; }
+.passage-option { width: 100%; min-height: 224px; display: flex; flex-direction: column; align-items: flex-start; gap: 0; padding: 14px; border: 1px solid var(--line-strong); border-radius: var(--radius-sm); background: var(--paper); color: var(--ink); text-align: left; box-shadow: 0 5px 12px rgba(57, 46, 33, .05); transition: transform .16s ease, border-color .16s ease, background .16s ease; }
+.passage-option:hover { transform: translateY(-2px); border-color: var(--coral); background: #fff8f4; }
+.passage-option:active { transform: translateY(0); }
+.passage-option-head { width: 100%; display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+.passage-option-number { color: var(--coral-deep); font: 800 .72rem/1 Consolas, monospace; letter-spacing: .08em; }
+.passage-option-source { overflow: hidden; color: var(--ink-faint); font-size: .65rem; text-overflow: ellipsis; white-space: nowrap; }
+.passage-option-title { display: block; margin-top: 24px; font-family: "Noto Serif SC", "Songti SC", serif; font-size: 1.08rem; font-weight: 650; line-height: 1.35; }
+.passage-option-excerpt { display: -webkit-box; width: 100%; margin-top: 11px; overflow: clip; color: var(--ink-soft); font-family: "Noto Serif SC", "Songti SC", serif; font-size: .78rem; line-height: 1.7; -webkit-box-orient: vertical; -webkit-line-clamp: 4; line-clamp: 4; }
+.passage-option-foot { width: 100%; margin-top: auto; padding-top: 14px; border-top: 1px solid var(--line); color: var(--ink-faint); font-size: .68rem; line-height: 1.4; }
+.source-note-panel { max-width: 34rem; margin: 18px 0 0; padding: 10px 12px; border-left: 3px solid var(--coral); color: var(--ink-faint); font-size: .74rem; line-height: 1.6; }
 .card-surface { border: 1px solid rgba(207, 199, 186, .75); border-radius: var(--radius-lg); background: var(--paper); box-shadow: var(--shadow); }
 .today-card { margin-top: 40px; padding: 28px; }
 .today-card-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 20px; }
@@ -226,6 +253,8 @@ progress.study-ring::-moz-progress-bar { border-radius: 50%; background: transpa
 .grade-button span { font-size: .75rem; font-weight: 750; }
 .grade-button small { margin-top: 2px; color: var(--ink-faint); font-size: .63rem; }
 .feedback-note { margin: 14px 0 0; color: var(--ink-faint); font-size: .76rem; }
+.feedback-actions { display: flex; flex-wrap: wrap; gap: 16px; margin-top: 18px; }
+.feedback-actions .text-button { min-height: 40px; font-size: .76rem; }
 .session-summary { max-width: 680px; margin: 70px auto 0; padding: 52px clamp(26px, 6vw, 74px); text-align: center; }
 .summary-mark { display: grid; place-items: center; width: 54px; height: 54px; margin: 0 auto 22px; border-radius: 50%; background: #e8f1e7; color: #4e7d56; font-size: 1.45rem; }
 .session-summary h1 { margin: 18px 0; font-size: clamp(2.4rem, 6vw, 4.2rem); }
@@ -255,6 +284,7 @@ progress.study-ring::-moz-progress-bar { border-radius: 50%; background: transpa
   .side-column { grid-template-columns: repeat(2, 1fr); padding-top: 0; }
   .boundary-card { grid-column: 1 / -1; }
   .records-grid { grid-template-columns: 1fr; }
+  .passage-option-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
 }
 
 @media (max-width: 640px) {
@@ -265,6 +295,13 @@ progress.study-ring::-moz-progress-bar { border-radius: 50%; background: transpa
   h1 { font-size: clamp(2.65rem, 14vw, 4rem); }
   .today-card { padding: 21px; border-radius: 22px; }
   .today-card h2 { font-size: 1.3rem; }
+  .quick-action-grid { grid-template-columns: 1fr; }
+  .passage-picker-heading { align-items: flex-start; }
+  .passage-picker-heading .secondary-button { min-height: 44px; }
+  .passage-option-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 9px; }
+  .passage-option { min-height: 206px; padding: 12px; }
+  .passage-option-title { margin-top: 18px; font-size: .98rem; }
+  .passage-option-excerpt { font-size: .73rem; }
   .today-stats { margin-top: 22px; }
   .stat-cell { padding-inline: 8px; }
   .stat-number { font-size: 1.3rem; }
@@ -284,6 +321,12 @@ progress.study-ring::-moz-progress-bar { border-radius: 50%; background: transpa
   .grade-options { grid-template-columns: repeat(2, 1fr); }
   .submit-answer { max-width: none; }
   .session-summary { margin-top: 24px; padding: 36px 20px; }
+}
+
+@container (min-width: 680px) {
+  .quick-action-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+  .quick-action { grid-template-columns: 30px 1fr; }
+  .quick-action > span:last-child { display: none; }
 }
 
 @media (prefers-reduced-motion: reduce) {

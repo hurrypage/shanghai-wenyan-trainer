@@ -1,4 +1,4 @@
-const CONTENT_VERSION = '0.2.0';
+const CONTENT_VERSION = '0.3.0';
 const DB_NAME = 'wenyan-shanghai-trainer';
 const DB_VERSION = 1;
 const STORE_NAME = 'key-value';
@@ -326,13 +326,101 @@ const ITEMS = [
   }
 ];
 
-const SKILLS = ['词句理解', '翻译', '信息与人物', '结构与论证', '观点与表达'];
+const SOURCE_CATALOG = {
+  curriculum: {
+    label: '课程标准与上海课程实施文件',
+    level: '一级',
+    file: '01_命题依据_课程标准/普通高中语文课程标准日常修订版（2017年版2025年修订）.pdf；上海市普通高中课程实施方案_沪教委基2021_35号.txt',
+    verification: '库内文件已通过 C1—C8 校验；2025 修订版来源页为二级渠道，未标为教育部官网原件。',
+    scope: '能力方向与课程语境依据'
+  },
+  textbook: {
+    label: '统编版高中语文教材篇目表',
+    level: '一级/二级交叉',
+    file: '03_教材_统编版篇目/统编版古诗文篇目表.md；人教社官网目录页',
+    verification: '篇目多源一致，待纸本终校；用于判断课内语境，不等同于 72 篇背诵清单。',
+    scope: '教材语境与能力练习'
+  },
+  officialReview: {
+    label: '上海高考官方评析与结构核定表',
+    level: '一级',
+    file: '04_真题_官方评析与核定表/官方评析索引.md；历年真题结构逐年核定表.md',
+    verification: '仅覆盖已公开的官方评析与结构信息；未声称拥有完整真题卷面或内部阅卷细则。',
+    scope: '题型趋势与命题语境依据'
+  },
+  textReference: {
+    label: '古籍文本参照层',
+    level: '三级',
+    file: '05_原文_古籍底本与工具书/底本选择与版本记录.md',
+    verification: '汉典材料存在版本、标点、字形与授权边界，只用于字句比对和异文发现。',
+    scope: '不能作为默写标准答案、教材底本或正式判分依据'
+  }
+};
+
+const PASSAGE_SOURCE = {
+  'passage-chen-she': { title: '教材篇目语境训练', sources: ['curriculum', 'textbook'], note: '依据课程标准与教材篇目表设计的原创语境卡。' },
+  'passage-zhuxu': { title: '教材篇目语境训练', sources: ['curriculum', 'textbook'], note: '《烛之武退秦师》列入统编版必修下册；本卡为原创训练，不是上海真题原题。' },
+  'passage-lianpo': { title: '教材篇目语境训练', sources: ['curriculum', 'textbook'], note: '依据教材语境与课程能力方向设计；没有使用未核定的真题答案。' },
+  'passage-hongmen': { title: '教材篇目语境训练', sources: ['curriculum', 'textbook'], note: '依据教材语境与人物、词句能力方向设计；本卡标为原创训练。' },
+  'passage-yueyang': { title: '教材篇目语境训练', sources: ['curriculum', 'textbook'], note: '依据教材篇目与文言能力方向设计；异文参照不进入答案标准。' },
+  'passage-xiaoyaoyou': { title: '教材篇目语境训练', sources: ['curriculum', 'textbook'], note: '依据教材篇目与课程能力方向设计；不将古籍网页当作判分依据。' }
+};
+
+const EXPANSION_PASSAGES = window.WENYAN_EXPANSION_PASSAGES || [];
+const EXPANSION_ITEMS = EXPANSION_PASSAGES.flatMap((passage) => passage.cards.map((card, index) => ({
+  ...card,
+  id: `exp-${passage.id}-${index + 1}`,
+  passageId: passage.id,
+  family: `信源扩充-${passage.title.replace(/^《|》$/g, '')}`,
+  source: 'WB 信源库 · 原创训练',
+  passageTitle: passage.title,
+  passageText: passage.text
+})));
+
+ITEMS.push(...EXPANSION_ITEMS);
+EXPANSION_PASSAGES.forEach((passage) => {
+  PASSAGE_SOURCE[passage.id] = {
+    title: 'WB 信源库扩充语境训练',
+    sources: ['curriculum', 'textbook', 'textReference'],
+    note: `依据《${passage.title.replace(/^《|》$/g, '')}》的信源库文本参照层与通行教材字句整理；片段已转为简体和现代标点，卡片为原创训练。`,
+    author: passage.author,
+    contentType: passage.contentType,
+    rangeLabel: passage.rangeLabel,
+    textbookStatus: passage.textbookStatus,
+    sourceFile: passage.sourceFile
+  };
+});
+
+ITEMS.forEach((item) => {
+  const passageSource = PASSAGE_SOURCE[item.passageId] || PASSAGE_SOURCE['passage-chen-she'];
+  item.identity = 'original_training';
+  item.identityLabel = '原创训练';
+  item.status = 'published';
+  item.sourceId = passageSource.sources.join('+');
+  item.sourceLevel = passageSource.sources.map((id) => SOURCE_CATALOG[id].level).join(' · ');
+  item.sourceFile = passageSource.sourceFile || passageSource.sources.map((id) => SOURCE_CATALOG[id].file).join('；');
+  item.designBasis = SOURCE_CATALOG.officialReview.file;
+  item.verification = `逐条核对题面、解析与对应篇目片段；训练卡型参考上海高考官方评析的能力描述。${SOURCE_CATALOG.textbook.verification}`;
+  item.rangeLabel = passageSource.rangeLabel || '教材语境训练';
+  item.textbookStatus = passageSource.textbookStatus || '教材语境';
+  item.contentType = passageSource.contentType || '文言文';
+  item.usageScope = `日常闪卡训练；${item.rangeLabel}；不得当作上海高考真题原题或官方标准答案。`;
+  item.sourceNote = `${passageSource.note} 卡型依据：${SOURCE_CATALOG.officialReview.label}。`;
+});
+
+const PASSAGE_IDS = [...new Set(ITEMS.map((item) => item.passageId))];
+const PASSAGE_OPTION_COUNT = Math.min(5, PASSAGE_IDS.length);
+
+const SKILLS = ['词句理解', '翻译', '信息与人物', '结构与论证', '观点与表达', '诗歌鉴赏'];
 const DEFAULT_STATE = {
   schemaVersion: 1,
   attempts: [],
   reviewStates: {},
   exposures: {},
+  flags: {},
   sessions: [],
+  resumeSession: null,
+  passagePicker: null,
   updatedAt: null
 };
 
@@ -346,6 +434,123 @@ const $$ = (selector, root = document) => [...root.querySelectorAll(selector)];
 
 function cloneDefault() {
   return structuredClone(DEFAULT_STATE);
+}
+
+function shuffle(items) {
+  const result = [...items];
+  for (let index = result.length - 1; index > 0; index -= 1) {
+    const swapIndex = Math.floor(Math.random() * (index + 1));
+    [result[index], result[swapIndex]] = [result[swapIndex], result[index]];
+  }
+  return result;
+}
+
+function passageSetKey(ids = []) {
+  return [...ids].sort().join('|');
+}
+
+function createPassageOptions(previousIds = []) {
+  const previousKey = passageSetKey(previousIds);
+  let next = shuffle(PASSAGE_IDS).slice(0, PASSAGE_OPTION_COUNT);
+  let attempts = 0;
+  while (passageSetKey(next) === previousKey && PASSAGE_IDS.length > PASSAGE_OPTION_COUNT && attempts < 12) {
+    next = shuffle(PASSAGE_IDS).slice(0, PASSAGE_OPTION_COUNT);
+    attempts += 1;
+  }
+  return next;
+}
+
+function ensurePassageOptions() {
+  const savedIds = state.passagePicker?.ids;
+  const valid = Array.isArray(savedIds)
+    && savedIds.length === PASSAGE_OPTION_COUNT
+    && new Set(savedIds).size === savedIds.length
+    && savedIds.every((id) => PASSAGE_IDS.includes(id));
+  if (!valid) {
+    state.passagePicker = { ids: createPassageOptions(), refreshedAt: Date.now() };
+  }
+  return state.passagePicker.ids;
+}
+
+function passageInfo(passageId) {
+  const items = ITEMS.filter((item) => item.passageId === passageId);
+  const first = items[0];
+  if (!first) return null;
+  const completed = state.attempts.filter((attempt) => attempt.articleFamily === first.family && !attempt.skipped).length;
+  const due = items.filter((item) => state.reviewStates[item.id]?.dueAt <= Date.now()).length;
+  return {
+    id: passageId,
+    title: first.passageTitle.replace(/片段$/, '').trim(),
+    family: first.family.replace(/^(教材样例|信源扩充)-/, ''),
+    text: first.passageText,
+    itemCount: items.length,
+    completed,
+    due,
+    sourceLevel: first.sourceLevel,
+    contentType: first.contentType,
+    author: PASSAGE_SOURCE[passageId]?.author || '项目原有语料',
+    rangeLabel: first.rangeLabel,
+    textbookStatus: first.textbookStatus,
+    note: PASSAGE_SOURCE[passageId]?.note || '依据当前已核验的教材语境设计。'
+  };
+}
+
+function renderPassagePicker() {
+  const container = $('#passage-options');
+  if (!container) return;
+  const ids = ensurePassageOptions();
+  container.innerHTML = '';
+  ids.map(passageInfo).filter(Boolean).forEach((passage, index) => {
+    const card = document.createElement('article');
+    card.className = 'passage-option-card';
+    card.setAttribute('role', 'listitem');
+
+    const button = document.createElement('button');
+    button.type = 'button';
+    button.className = 'passage-option';
+    button.dataset.passageId = passage.id;
+    button.setAttribute('aria-label', `选择${passage.title}进行篇目训练`);
+
+    const head = document.createElement('span');
+    head.className = 'passage-option-head';
+    const number = document.createElement('span');
+    number.className = 'passage-option-number';
+    number.textContent = String(index + 1).padStart(2, '0');
+    const source = document.createElement('span');
+    source.className = 'passage-option-source';
+    source.textContent = `${passage.contentType} · ${passage.author} · ${passage.rangeLabel}`;
+    head.append(number, source);
+
+    const title = document.createElement('strong');
+    title.className = 'passage-option-title';
+    title.textContent = passage.title;
+
+    const excerpt = document.createElement('span');
+    excerpt.className = 'passage-option-excerpt';
+    excerpt.textContent = passage.text;
+
+    const foot = document.createElement('span');
+    foot.className = 'passage-option-foot';
+    const status = passage.completed
+      ? `已练 ${Math.min(passage.completed, passage.itemCount)}/${passage.itemCount} 张`
+      : '尚未开始';
+    const due = passage.due ? ` · ${passage.due} 张待复习` : '';
+    foot.textContent = `${status}${due}`;
+
+    button.append(head, title, excerpt, foot);
+    card.append(button);
+    container.append(card);
+  });
+  const note = $('#passage-picker-note');
+  if (note) note.textContent = `从当前已入库的 ${PASSAGE_IDS.length} 篇文言文与诗歌语料中抽取 ${PASSAGE_OPTION_COUNT} 篇；选中后会连续练习这篇的全部训练卡。`;
+}
+
+async function refreshPassageOptions() {
+  const current = state.passagePicker?.ids || [];
+  state.passagePicker = { ids: createPassageOptions(current), refreshedAt: Date.now() };
+  await persistState();
+  renderPassagePicker();
+  announce(`已换一批 ${PASSAGE_OPTION_COUNT} 篇可选古文。`);
 }
 
 function dateKey(date = new Date()) {
@@ -411,7 +616,7 @@ async function loadState() {
     try { saved = JSON.parse(localStorage.getItem(DB_NAME) || 'null'); } catch { saved = null; }
   }
   if (saved && saved.schemaVersion === DEFAULT_STATE.schemaVersion) {
-    state = { ...cloneDefault(), ...saved, attempts: saved.attempts || [], reviewStates: saved.reviewStates || {}, exposures: saved.exposures || {}, sessions: saved.sessions || [] };
+    state = { ...cloneDefault(), ...saved, attempts: saved.attempts || [], reviewStates: saved.reviewStates || {}, exposures: saved.exposures || {}, flags: saved.flags || {}, sessions: saved.sessions || [], resumeSession: saved.resumeSession || null, passagePicker: saved.passagePicker || null };
   }
 }
 
@@ -431,17 +636,34 @@ function unseenItems() {
   return ITEMS.filter((item) => !state.exposures[item.passageId]);
 }
 
-function buildQueue() {
+function buildQueue(mode = 'default') {
   const due = dueItems().sort((a, b) => (state.reviewStates[a.id]?.dueAt || 0) - (state.reviewStates[b.id]?.dueAt || 0));
+  const flagged = ITEMS.filter((item) => state.flags[item.id] && !due.includes(item)).sort((a, b) => (state.flags[a.id]?.flaggedAt || 0) - (state.flags[b.id]?.flaggedAt || 0));
   const fresh = unseenItems().sort((a, b) => a.estimatedSec - b.estimatedSec);
   const fallback = ITEMS.filter((item) => !due.includes(item) && !fresh.includes(item)).sort((a, b) => {
     const aState = state.reviewStates[a.id] || {};
     const bState = state.reviewStates[b.id] || {};
     return (aState.lastAttemptAt || 0) - (bState.lastAttemptAt || 0);
   });
-  const result = [];
-  [...due, ...fresh, ...fallback].forEach((item) => { if (!result.includes(item)) result.push(item); });
+  let result = [];
+  [...due, ...flagged, ...fresh, ...fallback].forEach((item) => { if (!result.includes(item)) result.push(item); });
+  if (mode === 'quick') return result.slice(0, 1);
+  if (mode === 'read') {
+    const firstByPassage = [];
+    result.forEach((item) => { if (!firstByPassage.some((candidate) => candidate.passageId === item.passageId)) firstByPassage.push(item); });
+    return firstByPassage.slice(0, 2);
+  }
   return result.slice(0, 4);
+}
+
+function buildPassageQueue(passageId) {
+  const items = ITEMS.filter((item) => item.passageId === passageId);
+  const due = items.filter((item) => state.reviewStates[item.id]?.dueAt <= Date.now())
+    .sort((a, b) => (state.reviewStates[a.id]?.dueAt || 0) - (state.reviewStates[b.id]?.dueAt || 0));
+  const flagged = items.filter((item) => state.flags[item.id] && !due.includes(item));
+  const rest = items.filter((item) => !due.includes(item) && !flagged.includes(item))
+    .sort((a, b) => (state.reviewStates[a.id]?.lastAttemptAt || 0) - (state.reviewStates[b.id]?.lastAttemptAt || 0));
+  return [...due, ...flagged, ...rest];
 }
 
 function calculateEstimate(queue) {
@@ -476,15 +698,28 @@ function renderDashboard() {
   if (headerDate) headerDate.textContent = formatDate(today, true);
   $('#due-count').textContent = due.length;
   $('#new-count').textContent = fresh.length;
+  const passageCount = $('#passage-count');
+  const itemCount = $('#item-count');
+  if (passageCount) passageCount.textContent = PASSAGE_IDS.length;
+  if (itemCount) itemCount.textContent = ITEMS.length;
   $('#yesterday-count').textContent = yesterdayCount;
   $('#today-progress').value = progress;
   $('#today-progress').style.setProperty('--value', progress);
   $('#today-progress-label').textContent = `${progress}%`;
   $('#session-estimate').textContent = `约 ${calculateEstimate(buildQueue())} 分钟`;
   $('#session-note').textContent = fresh.length ? '今天的新卡不会在本次结束时立即计入掌握。' : '到期复习优先；换一篇文章再做一次，才算真正的延迟检查。';
+  const continueButton = $('#continue-session');
+  const continueCopy = $('#continue-session-copy');
+  if (continueButton && continueCopy) {
+    const resume = state.resumeSession;
+    continueButton.disabled = !resume;
+    continueCopy.textContent = resume ? `还剩 ${Math.max(1, resume.queueIds.length - resume.index)} 张卡` : '没有未完成训练';
+    continueButton.setAttribute('aria-disabled', String(!resume));
+  }
   renderStreak();
   renderSkills();
   renderHistory();
+  renderPassagePicker();
 }
 
 function renderStreak() {
@@ -512,7 +747,7 @@ function renderSkills() {
   const recent = state.attempts.slice(0, 40);
   let totalSamples = 0;
   SKILLS.forEach((skill) => {
-    const attempts = recent.filter((attempt) => attempt.skill === skill);
+    const attempts = recent.filter((attempt) => attempt.skill === skill && !attempt.skipped);
     totalSamples += attempts.length;
     const score = attempts.length ? attempts.reduce((sum, attempt) => sum + (attempt.grade / 3), 0) / attempts.length : 0;
     const row = document.createElement('div');
@@ -570,23 +805,49 @@ function renderRecords() {
     const strong = document.createElement('strong');
     strong.textContent = item ? item.title : '已删除的题目';
     const span = document.createElement('span');
-    span.textContent = `${formatDate(dateKey(new Date(attempt.submittedAt)))} · ${attempt.delayed ? '延迟复测' : '首次练习'} · ${attempt.scoring === 'objective' ? '客观题' : '自评题'}`;
+    span.textContent = `${formatDate(dateKey(new Date(attempt.submittedAt)))} · ${attempt.skipped ? '跳过待复核' : (attempt.delayed ? '延迟复测' : '首次练习')} · ${attempt.scoring === 'objective' ? '客观题' : '自评题'}`;
     main.append(strong, span);
     const grade = document.createElement('span');
     grade.className = 'attempt-grade';
-    grade.textContent = ['完全不会', '有印象', '基本掌握', '非常熟练'][attempt.grade] || '已记录';
+    grade.textContent = attempt.skipped ? '已跳过' : (['完全不会', '有印象', '基本掌握', '非常熟练'][attempt.grade] || '已记录');
     li.append(main, grade);
     list.append(li);
   });
 }
 
-function startSession() {
-  const queue = buildQueue();
+function startSession(mode = 'default', passageId = null) {
+  let queue;
+  let resume = null;
+  if (mode === 'continue' && state.resumeSession) {
+    resume = state.resumeSession;
+    queue = resume.queueIds.map(getItem).filter(Boolean);
+    if (!queue.length) {
+      state.resumeSession = null;
+      persistState();
+      renderDashboard();
+      announce('上次训练的内容已不在当前内容版本中。');
+      return;
+    }
+  } else if (mode === 'passage' && passageId) {
+    queue = buildPassageQueue(passageId);
+  } else {
+    queue = buildQueue(mode);
+  }
   if (!queue.length) {
     announce('暂时没有可安排的任务。');
     return;
   }
-  session = { queue, index: 0, startedAt: Date.now(), completed: 0, correct: 0, current: null, saved: false };
+  session = {
+    queue,
+    index: resume ? Math.min(resume.index, queue.length - 1) : 0,
+    startedAt: Date.now(),
+    completed: resume?.completed || 0,
+    correct: resume?.correct || 0,
+    current: null,
+    saved: false,
+    mode,
+    passageId: resume?.passageId || passageId
+  };
   $('#session-card').classList.remove('is-hidden');
   $('#session-summary').classList.add('is-hidden');
   setView('session');
@@ -598,22 +859,26 @@ function renderSessionItem() {
   session.current = { item, submitted: false, grade: null, answer: '', correct: null, submittedAt: null };
   const total = session.queue.length;
   $('#session-step').textContent = `${session.index + 1} / ${total}`;
-  $('#session-mode').textContent = state.reviewStates[item.id] ? '到期复习' : '新的内容';
+  $('#session-mode').textContent = session.passageId ? '篇目训练' : (state.reviewStates[item.id] ? '到期复习' : '新的内容');
   $('#session-time').textContent = `约 ${calculateEstimate(session.queue.slice(session.index))} 分钟`;
   const sessionProgress = Math.round((session.index / total) * 100);
   $('#session-progress-bar').style.width = `${sessionProgress}%`;
   $('.progress-track').setAttribute('aria-valuenow', String(sessionProgress));
   $('#question-kicker').textContent = `QUESTION ${String(session.index + 1).padStart(2, '0')}`;
-  $('#item-source').textContent = item.source;
+  $('#item-source').textContent = `${item.identityLabel} · ${item.contentType} · ${item.rangeLabel}`;
   $('#item-type').textContent = item.typeLabel;
   $('#passage-title').textContent = item.passageTitle;
   $('#passage-text').textContent = item.passageText;
+  $('#item-source-note').textContent = `${item.sourceNote} ${item.usageScope}`;
   $('#passage-text').hidden = false;
   $('#toggle-context').textContent = '收起原文';
   $('#session-title').textContent = item.title;
   $('#answer-area').innerHTML = '';
   $('#answer-hint').textContent = item.promptHint || '先凭自己的判断作答，再查看解析。';
   $('#feedback-panel').classList.add('is-hidden');
+  $('#flag-question').disabled = false;
+  $('#skip-card').disabled = false;
+  $('#flag-question').textContent = state.flags[item.id] ? '已标记疑问' : '答案有疑问';
   $$('.grade-button').forEach((button) => { button.disabled = false; button.classList.remove('is-selected'); });
   $$('.next-button').forEach((button) => button.remove());
   const submit = $('.submit-answer');
@@ -695,10 +960,11 @@ function scheduleReview(item, grade) {
   return interval;
 }
 
-async function saveGrade(grade) {
+async function saveGrade(grade, options = {}) {
   if (!session || !session.current.submitted || session.current.grade !== null) return;
   const item = session.current.item;
   session.current.grade = grade;
+  session.current.skipped = Boolean(options.skipped);
   const delayed = Boolean(state.exposures[item.passageId] && Date.now() - state.exposures[item.passageId].firstSeenAt >= 20 * 60 * 60 * 1000);
   if (!state.exposures[item.passageId]) state.exposures[item.passageId] = { firstSeenAt: Date.now(), family: item.family };
   const isNoHint = item.type === 'choice' ? session.current.correct === true : grade >= 2;
@@ -709,8 +975,9 @@ async function saveGrade(grade) {
     articleFamily: item.family,
     answer: session.current.answer,
     correct: session.current.correct,
-    noHint: isNoHint,
+    noHint: isNoHint && !options.skipped,
     grade,
+    skipped: Boolean(options.skipped),
     delayed,
     scoring: item.type === 'choice' ? 'objective' : 'self_check',
     submittedAt: session.current.submittedAt,
@@ -727,11 +994,29 @@ async function saveGrade(grade) {
     button.disabled = true;
   });
   $('#feedback-note').textContent = grade === 0 ? '已安排明天重新学习这张卡。' : `已安排约 ${interval} 天后复习；换语境的题会单独记录。`;
+  if (options.skipped) $('#feedback-note').textContent = '已跳过并安排明天再看；这次不计入掌握。';
+  $('#skip-card').disabled = true;
   const next = document.createElement('button');
   next.type = 'button'; next.className = 'secondary-button next-button'; next.textContent = session.index === session.queue.length - 1 ? '查看今日总结 →' : '下一题 →';
   next.addEventListener('click', advanceSession, { once: true });
   $('#feedback-panel').append(next);
-  announce(`已记录：${['完全不会', '有印象', '基本掌握', '非常熟练'][grade]}。${interval} 天后复习。`);
+  announce(options.skipped ? '已跳过这张卡，明天再看。' : `已记录：${['完全不会', '有印象', '基本掌握', '非常熟练'][grade]}。${interval} 天后复习。`);
+}
+
+async function flagCurrentQuestion() {
+  if (!session?.current?.item) return;
+  const item = session.current.item;
+  state.flags[item.id] = { itemId: item.id, flaggedAt: Date.now(), sourceId: item.sourceId, reason: 'learner_question' };
+  await persistState();
+  $('#flag-question').textContent = '已标记疑问';
+  $('#flag-question').disabled = true;
+  $('#feedback-note').textContent = '已记录你的疑问，后续复核时会优先保留这张卡。';
+  announce('已标记答案有疑问。');
+}
+
+function skipCurrentQuestion() {
+  if (!session?.current?.submitted) return;
+  saveGrade(0, { skipped: true });
 }
 
 function advanceSession() {
@@ -746,6 +1031,12 @@ async function finishSession(partial = false) {
   session.saved = true;
   const durationSec = Math.max(1, Math.round((Date.now() - session.startedAt) / 1000));
   state.sessions.unshift({ id: `session-${Date.now()}`, dateKey: dateKey(), startedAt: session.startedAt, endedAt: Date.now(), durationSec, planned: session.queue.length, completed: session.completed, correct: session.correct, partial, contentVersion: CONTENT_VERSION });
+  const resumeIndex = session.current && session.current.grade !== null ? session.index + 1 : session.index;
+  if (partial && resumeIndex < session.queue.length) {
+    state.resumeSession = { queueIds: session.queue.map((item) => item.id), index: resumeIndex, completed: session.completed, correct: session.correct, passageId: session.passageId || null, savedAt: Date.now() };
+  } else {
+    state.resumeSession = null;
+  }
   await persistState();
   if (partial) {
     session = null;
@@ -781,7 +1072,8 @@ async function importData(file) {
     const payload = JSON.parse(await file.text());
     const incoming = payload?.state;
     if (!incoming || incoming.schemaVersion !== DEFAULT_STATE.schemaVersion || !Array.isArray(incoming.attempts) || !Array.isArray(incoming.sessions)) throw new Error('invalid');
-    state = { ...cloneDefault(), ...incoming, reviewStates: incoming.reviewStates || {}, exposures: incoming.exposures || {} };
+    state = { ...cloneDefault(), ...incoming, reviewStates: incoming.reviewStates || {}, exposures: incoming.exposures || {}, flags: incoming.flags || {}, resumeSession: incoming.resumeSession || null, passagePicker: incoming.passagePicker || null };
+    ensurePassageOptions();
     await persistState();
     renderDashboard(); renderRecords();
     announce('备份已导入。');
@@ -792,7 +1084,17 @@ async function importData(file) {
 
 function wireEvents() {
   $$('[data-view]').forEach((button) => button.addEventListener('click', () => setView(button.dataset.view)));
-  $('#start-session').addEventListener('click', startSession);
+  $('#start-session').addEventListener('click', () => startSession('three'));
+  $$('[data-start-mode]').forEach((button) => button.addEventListener('click', () => {
+    if (button.disabled) return;
+    startSession(button.dataset.startMode);
+  }));
+  $('#refresh-passages').addEventListener('click', refreshPassageOptions);
+  $('#passage-options').addEventListener('click', (event) => {
+    const button = event.target.closest('.passage-option');
+    if (!button) return;
+    startSession('passage', button.dataset.passageId);
+  });
   $('#finish-session').addEventListener('click', () => { session = null; setView('overview'); });
   $('#quit-session').addEventListener('click', () => finishSession(true));
   $('#answer-form').addEventListener('submit', handleAnswerSubmit);
@@ -805,6 +1107,8 @@ function wireEvents() {
     passage.hidden = !passage.hidden;
     $('#toggle-context').textContent = passage.hidden ? '展开原文' : '收起原文';
   });
+  $('#flag-question').addEventListener('click', flagCurrentQuestion);
+  $('#skip-card').addEventListener('click', skipCurrentQuestion);
   $('#export-data').addEventListener('click', exportData);
   $('#import-data').addEventListener('click', () => $('#import-file').click());
   $('#import-file').addEventListener('change', (event) => { if (event.target.files[0]) importData(event.target.files[0]); event.target.value = ''; });
@@ -819,6 +1123,9 @@ async function init() {
   window.scrollTo(0, 0);
   wireEvents();
   await loadState();
+  const previousPassagePicker = state.passagePicker?.ids?.join('|') || '';
+  ensurePassageOptions();
+  if (state.passagePicker?.ids?.join('|') !== previousPassagePicker) await persistState();
   renderDashboard();
   renderRecords();
 }
