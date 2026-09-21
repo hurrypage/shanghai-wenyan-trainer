@@ -1,4 +1,4 @@
-const CONTENT_VERSION = '0.3.0';
+const CONTENT_VERSION = '0.4.1';
 const DB_NAME = 'wenyan-shanghai-trainer';
 const DB_VERSION = 1;
 const STORE_NAME = 'key-value';
@@ -358,12 +358,17 @@ const SOURCE_CATALOG = {
 };
 
 const PASSAGE_SOURCE = {
-  'passage-chen-she': { title: '教材篇目语境训练', sources: ['curriculum', 'textbook'], note: '依据课程标准与教材篇目表设计的原创语境卡。' },
-  'passage-zhuxu': { title: '教材篇目语境训练', sources: ['curriculum', 'textbook'], note: '《烛之武退秦师》列入统编版必修下册；本卡为原创训练，不是上海真题原题。' },
-  'passage-lianpo': { title: '教材篇目语境训练', sources: ['curriculum', 'textbook'], note: '依据教材语境与课程能力方向设计；没有使用未核定的真题答案。' },
-  'passage-hongmen': { title: '教材篇目语境训练', sources: ['curriculum', 'textbook'], note: '依据教材语境与人物、词句能力方向设计；本卡标为原创训练。' },
-  'passage-yueyang': { title: '教材篇目语境训练', sources: ['curriculum', 'textbook'], note: '依据教材篇目与文言能力方向设计；异文参照不进入答案标准。' },
-  'passage-xiaoyaoyou': { title: '教材篇目语境训练', sources: ['curriculum', 'textbook'], note: '依据教材篇目与课程能力方向设计；不将古籍网页当作判分依据。' }
+  'passage-chen-she': { title: '《史记·卷四十八》完整原文参照', sources: ['curriculum', 'textbook', 'textReference'], note: '训练区显示《史记·卷四十八·陈涉世家》的完整公开卷本文本；本地仅作简体字与现代标点整理，卡片仍是原创训练，不是上海真题原题。' },
+  'passage-zhuxu': { title: '《左传·僖公三十年》完整原文参照', sources: ['curriculum', 'textbook', 'textReference'], note: '训练区显示《左传·僖公三十年·烛之武退秦师》的完整公开篇本文本；本地仅作简体字与现代标点整理，卡片仍是原创训练，不是上海真题原题。' },
+  'passage-lianpo': { title: '《史记·卷八十一》完整原文参照', sources: ['curriculum', 'textbook', 'textReference'], note: '训练区显示《史记·卷八十一·廉颇蔺相如列传》的完整公开卷本文本；本地仅作简体字与现代标点整理，卡片仍是原创训练。' },
+  'passage-hongmen': { title: '《史记·卷七》鸿门宴完整原文参照', sources: ['curriculum', 'textbook', 'textReference'], note: '训练区显示《史记·卷七·项羽本纪》中鸿门宴段落的完整公开卷本文本；本地仅作简体字与现代标点整理，卡片仍是原创训练。' },
+  'passage-yueyang': { title: '《岳阳楼记》完整原文参照', sources: ['curriculum', 'textbook', 'textReference'], note: '训练区显示范仲淹《岳阳楼记》的完整公开篇本文本；本地仅作简体字与现代标点整理，异文参照不进入答案标准。' },
+  'passage-xiaoyaoyou': { title: '《庄子·逍遥游》完整篇目参照', sources: ['curriculum', 'textbook', 'textReference'], note: '训练区显示教材通行的《逍遥游》完整篇目文本；文本参照层仅用于阅读与字句比对，不作为默写标准答案或正式判分依据。' }
+};
+
+const FULL_PASSAGES = {
+  ...(window.WENYAN_FULL_PASSAGES || {}),
+  ...(window.WENYAN_SAMPLE_FULL_PASSAGES || {})
 };
 
 const EXPANSION_PASSAGES = window.WENYAN_EXPANSION_PASSAGES || [];
@@ -374,7 +379,8 @@ const EXPANSION_ITEMS = EXPANSION_PASSAGES.flatMap((passage) => passage.cards.ma
   family: `信源扩充-${passage.title.replace(/^《|》$/g, '')}`,
   source: 'WB 信源库 · 原创训练',
   passageTitle: passage.title,
-  passageText: passage.text
+  passageExcerpt: passage.text,
+  passageText: FULL_PASSAGES[passage.id] || passage.text
 })));
 
 ITEMS.push(...EXPANSION_ITEMS);
@@ -382,7 +388,7 @@ EXPANSION_PASSAGES.forEach((passage) => {
   PASSAGE_SOURCE[passage.id] = {
     title: 'WB 信源库扩充语境训练',
     sources: ['curriculum', 'textbook', 'textReference'],
-    note: `依据《${passage.title.replace(/^《|》$/g, '')}》的信源库文本参照层与通行教材字句整理；片段已转为简体和现代标点，卡片为原创训练。`,
+    note: `依据《${passage.title.replace(/^《|》$/g, '')}》的信源库文本参照层整理；训练区显示对应篇目的完整原文，卡片为原创训练。`,
     author: passage.author,
     contentType: passage.contentType,
     rangeLabel: passage.rangeLabel,
@@ -392,6 +398,8 @@ EXPANSION_PASSAGES.forEach((passage) => {
 });
 
 ITEMS.forEach((item) => {
+  item.passageExcerpt = item.passageExcerpt || item.passageText;
+  item.passageText = FULL_PASSAGES[item.passageId] || item.passageText;
   const passageSource = PASSAGE_SOURCE[item.passageId] || PASSAGE_SOURCE['passage-chen-she'];
   item.identity = 'original_training';
   item.identityLabel = '原创训练';
@@ -482,7 +490,7 @@ function passageInfo(passageId) {
     id: passageId,
     title: first.passageTitle.replace(/片段$/, '').trim(),
     family: first.family.replace(/^(教材样例|信源扩充)-/, ''),
-    text: first.passageText,
+    text: first.passageExcerpt || first.passageText,
     itemCount: items.length,
     completed,
     due,
@@ -867,7 +875,7 @@ function renderSessionItem() {
   $('#question-kicker').textContent = `QUESTION ${String(session.index + 1).padStart(2, '0')}`;
   $('#item-source').textContent = `${item.identityLabel} · ${item.contentType} · ${item.rangeLabel}`;
   $('#item-type').textContent = item.typeLabel;
-  $('#passage-title').textContent = item.passageTitle;
+  $('#passage-title').textContent = item.passageTitle.replace(/片段$/, '').trim();
   $('#passage-text').textContent = item.passageText;
   $('#item-source-note').textContent = `${item.sourceNote} ${item.usageScope}`;
   $('#passage-text').hidden = false;
